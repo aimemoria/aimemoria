@@ -127,6 +127,7 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
 
 // Automatically update the year
 document.getElementById('currentYear').textContent = new Date().getFullYear();
+document.getElementById('yearsInField').textContent = new Date().getFullYear() - 2022;
 
 // Particle Animation
 const canvas = document.getElementById('network');

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        .login-card {
+            background: #16213e;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem;
+        }
+        .login-card h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #e94560;
+            font-size: 1.8rem;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .login-card input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        .login-card input[readonly] {
+            opacity: 0.7;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-bottom: 0.5rem;
+        }
+        #login-btn {
+            background: #e94560;
+            color: #fff;
+        }
+        #login-btn:hover { background: #c73e54; transform: scale(1.02); }
+        #signup-btn {
+            background: transparent;
+            color: #e94560;
+            border: 1px solid #e94560;
+        }
+        #signup-btn:hover { background: rgba(233,69,96,0.1); }
+        .error { color: #ff6b6b; text-align: center; margin-top: 0.5rem; font-size: 0.9rem; }
+
+        /* Dashboard */
+        #dashboard { display: none; padding: 1rem; max-width: 1400px; margin: 0 auto; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .admin-header h1 { font-size: 1.6rem; color: #e94560; }
+        #logout-btn {
+            background: transparent;
+            color: #e94560;
+            border: 1px solid #e94560;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        #logout-btn:hover { background: rgba(233,69,96,0.15); }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: #16213e;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .stat-card h3 { font-size: 0.9rem; color: #999; margin-bottom: 0.5rem; }
+        .stat-card p { font-size: 2rem; font-weight: 700; color: #e94560; }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-card {
+            background: #16213e;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .chart-card h3 { font-size: 1rem; color: #ccc; margin-bottom: 1rem; }
+
+        /* Table */
+        .table-card {
+            background: #16213e;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        .table-card h3 { font-size: 1rem; color: #ccc; margin-bottom: 1rem; }
+        .table-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .table-controls input {
+            padding: 0.5rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .table-controls button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            background: #e94560;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            transition: background 0.3s;
+        }
+        .table-controls button:hover { background: #c73e54; }
+        #clear-filter-btn { background: #333; }
+        #clear-filter-btn:hover { background: #444; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #2a2a4a;
+            font-size: 0.85rem;
+        }
+        th { color: #999; font-weight: 600; }
+        td { color: #ddd; }
+        tr:hover td { background: rgba(233,69,96,0.05); }
+
+        .loading { text-align: center; padding: 2rem; color: #999; }
+
+        @media screen and (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .admin-header h1 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h1>Admin Login</h1>
+            <form id="login-form">
+                <input type="password" id="password" placeholder="Enter password" required>
+                <button type="submit" id="login-btn">Sign In</button>
+                <p id="auth-error" class="error"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+        <header class="admin-header">
+            <h1>Analytics Dashboard</h1>
+            <button id="logout-btn">Sign Out</button>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Visits</h3>
+                <p id="total-visits">--</p>
+            </div>
+            <div class="stat-card">
+                <h3>Today's Visits</h3>
+                <p id="today-visits">--</p>
+            </div>
+            <div class="stat-card">
+                <h3>Unique Countries</h3>
+                <p id="unique-countries">--</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Interactions</h3>
+                <p id="total-interactions">--</p>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Visits Over Time (Last 30 Days)</h3>
+                <canvas id="visitsChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Visitor Locations (Top Countries)</h3>
+                <canvas id="locationsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Section Interactions</h3>
+                <canvas id="sectionsChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Most Clicked Elements</h3>
+                <canvas id="clicksChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Visits Table -->
+        <div class="table-card">
+            <h3>Recent Visits</h3>
+            <div class="table-controls">
+                <input type="date" id="filter-date">
+                <button id="filter-btn">Filter</button>
+                <button id="clear-filter-btn">Clear</button>
+            </div>
+            <table id="visits-table">
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>City</th>
+                        <th>Country</th>
+                        <th>Page</th>
+                        <th>Referrer</th>
+                        <th>Device</th>
+                    </tr>
+                </thead>
+                <tbody id="visits-tbody">
+                    <tr><td colspan="6" class="loading">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyAj7OLLOxlytIZc8cxtqGe8ssxEc0_5tLw",
+            authDomain: "aime-moria.firebaseapp.com",
+            projectId: "aime-moria",
+            storageBucket: "aime-moria.firebasestorage.app",
+            messagingSenderId: "615071915640",
+            appId: "1:615071915640:web:ff4d979245fad83300578d"
+        });
+    </script>
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

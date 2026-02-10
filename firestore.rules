@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Visits: anyone can create and read
+    match /visits/{visitId} {
+      allow create, read: if true;
+      allow update, delete: if false;
+    }
+
+    // Interactions: anyone can create and read
+    match /interactions/{interactionId} {
+      allow create, read: if true;
+      allow update, delete: if false;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

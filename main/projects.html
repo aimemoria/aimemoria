@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Aime Serge Tuyishime</title>
+    <meta name="description" content="Explore projects by Aime Serge Tuyishime - from full-stack web apps to VR simulations and data science.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/projects.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div><a href="index.html" class="logo">aimemoria</a></div>
+        <nav>
+            <button id="darkModeToggle" class="dark-mode-btn">&#9680;</button>
+            <button id="menuToggle" class="menu-toggle">&#x2015;<br>&#x2015;</button>
+            <ul class="menu">
+                <li><a href="index.html" class="quicksand-menu">Home</a></li>
+                <li><a href="index.html#about" class="quicksand-menu">About</a></li>
+                <li><a href="index.html#skills" class="quicksand-menu">Skills</a></li>
+                <li><a href="projects.html" class="quicksand-menu">Projects</a></li>
+                <li><a href="index.html#contact" class="quicksand-menu">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="projects-section">
+            <div class="projects-intro-card">
+                <h2>My Projects</h2>
+                <p>A selection of projects I've built, from full-stack apps to VR simulations and data science.</p>
+            </div>
+            <div class="category-filters" id="categoryFilters"></div>
+            <div class="projects-container">
+                <div class="projects-grid" id="projectsGrid"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Project Detail Modal -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-meta">
+                <span class="project-category" id="modalCategory"></span>
+                <span class="project-status" id="modalStatus"></span>
+            </div>
+            <h2 id="modalTitle"></h2>
+            <p class="modal-desc" id="modalDesc"></p>
+            <div class="tech-tags" id="modalTech"></div>
+            <div class="modal-actions">
+                <a href="#" id="modalGithub" target="_blank" rel="noopener" class="modal-github-btn">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+                <a href="#" id="modalLive" target="_blank" rel="noopener" class="modal-live-btn" style="display: none;">
+                    <i class="fas fa-external-link-alt"></i> Visit Site
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            <div><a href="index.html" class="logo">aimemoria</a></div>
+            <p>I'm a passionate Computer Science<br> student with a strong foundation in<br> programming, problem-solving, and<br> software development.</p>
+        </div>
+        <div class="footer-contact">
+            <h2>Contact</h2>
+            <p><i class="fas fa-map-marker-alt"></i> United States</p>
+            <p><i class="fas fa-phone"></i> <a href="tel:+14059266844">+1 (405) 926-6844</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:220aime@gmail.com">220aime@gmail.com</a></p>
+        </div>
+        <div class="footer-follow">
+            <h2>Follow Me</h2>
+            <a href="https://www.linkedin.com/in/aimemoria/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/aimemoria/profilecard/?igsh=MWtyN2xxenppNzFr" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/qr/6W6KFYT2XTMKC1" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.facebook.com/share/15Y5bvPpoA/?mibextid=wwXIfr" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+            <a href="https://github.com/aimemoria" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="copyright">&copy; <span id="currentYear"></span> aimemoria</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/script.js"></script>
+    <script src="js/projects.js"></script>
+    <script src="https://kit.fontawesome.com/54de2f0f1c.js" crossorigin="anonymous"></script>
+</body>
+</html>

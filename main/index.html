@@ -54,6 +54,7 @@
                 <li><a href="#home" class="quicksand-menu">Home</a></li>
                 <li><a href="#about" class="quicksand-menu">About</a></li>
                 <li><a href="#skills" class="quicksand-menu">Skills</a></li>
+                <li><a href="projects.html" class="quicksand-menu">Projects</a></li>
                 <li><a href="#contact" class="quicksand-menu">Contact</a></li>
             </ul>
         </nav>
@@ -80,15 +81,15 @@
                 <aside class="left-sidebar">
                     <div class="card-1">
                         <img src="images/experience-icon.png" alt="Experience Icon" class="card-icon">
-                        <h3>3 Years</h3>
-                        <p>of Experience</p>
+                        <h3><span id="yearsInField"></span> Years</h3>
+                        <p>in Field (Academic & Projects)</p>
                     </div>
                     <div class="card-2">
                         <img src="images/certificates-icon.png" alt="Certificates Icon" class="card-icon">
                         <h3>Certificates</h3>
                         <p>Available upon request</p>
                     </div>
-                    <div class="card-3">
+                    <div class="card-3" onclick="window.location.href='projects.html'" style="cursor: pointer;">
                         <img src="images/projects-icon.png" alt="Projects Icon" class="card-icon">
                         <h3>10+</h3>
                         <p>Completed Projects</p>
@@ -178,6 +179,7 @@
                     <p><a href="https://www.instagram.com/aimemoria/profilecard/?igsh=MWtyN2xxenppNzFr" target="_blank" rel="noopener" style="color: #f08ca5;"><i class="fab fa-instagram"></i> Instagram</a></p>
                     <p><a href="https://wa.me/qr/6W6KFYT2XTMKC1" target="_blank" rel="noopener" style="color: #60bd74;"><i class="fab fa-whatsapp"></i> WhatsApp</a></p>
                     <p><a href="https://www.facebook.com/share/15Y5bvPpoA/?mibextid=wwXIfr" target="_blank" rel="noopener" style="color: #3270f7;"><i class="fab fa-facebook"></i> Facebook</a></p>
+                    <p><a href="https://github.com/aimemoria" target="_blank" rel="noopener" style="color: #333;"><i class="fab fa-github"></i> GitHub</a></p>
                 </div>
                 <section id="contact-1">
                     <h2>Reach Me Out</h2>
@@ -225,6 +227,7 @@
             <a href="https://www.instagram.com/aimemoria/profilecard/?igsh=MWtyN2xxenppNzFr" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
             <a href="https://wa.me/qr/6W6KFYT2XTMKC1" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
             <a href="https://www.facebook.com/share/15Y5bvPpoA/?mibextid=wwXIfr" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+            <a href="https://github.com/aimemoria" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
         </div>
         <p class="copyright">&copy; <span id="currentYear"></span> aimemoria</p>
     </footer>
@@ -232,5 +235,20 @@
     <!-- Scripts -->
     <script src="js/script.js"></script>
     <script src="https://kit.fontawesome.com/54de2f0f1c.js" crossorigin="anonymous"></script>
+
+    <!-- Firebase SDK & Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyAj7OLLOxlytIZc8cxtqGe8ssxEc0_5tLw",
+            authDomain: "aime-moria.firebaseapp.com",
+            projectId: "aime-moria",
+            storageBucket: "aime-moria.firebasestorage.app",
+            messagingSenderId: "615071915640",
+            appId: "1:615071915640:web:ff4d979245fad83300578d"
+        });
+    </script>
+    <script src="js/analytics.js"></script>
 </body>
 </html>

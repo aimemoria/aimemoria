@@ -1,0 +1,46 @@
+name: Update Projects from GitHub
+
+on:
+  # Run daily at midnight UTC
+  schedule:
+    - cron: '0 0 * * *'
+  # Run when manually triggered from GitHub Actions tab
+  workflow_dispatch:
+  # Run when a new repo is created (via repository_dispatch from a webhook)
+  repository_dispatch:
+    types: [new-repo-created]
+
+permissions:
+  contents: write
+
+jobs:
+  update-projects:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run project updater
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/update-projects.js
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet main/data/projects.json || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add main/data/projects.json
+          git commit -m "Auto-update projects from GitHub repos"
+          git push
