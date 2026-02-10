@@ -5,13 +5,6 @@ const headerHeight = document.querySelector('header').offsetHeight;
 document.querySelectorAll('section').forEach(section => {
     section.style.scrollMarginTop = `${headerHeight+10}px`;
 });
-
-// Force a deep refresh when returning from back/forward cache
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-        window.location.reload();
-    }
-});
 // Dark/Light Mode Toggle
 const darkModeToggle = document.getElementById('darkModeToggle');
 const setThemeIcon = () => {
@@ -73,53 +66,36 @@ menu.querySelectorAll('a').forEach(link => {
 
 mobileQuery.addEventListener('change', () => setMenuState(false));
 
-// Deep refresh on page navigation (index/projects)
-document.querySelectorAll('a[href]').forEach(link => {
-    link.addEventListener('click', (e) => {
-        const href = link.getAttribute('href');
-        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) {
-            return;
-        }
-
-        const url = new URL(href, window.location.origin);
-        const isPageNav = url.pathname.endsWith('index.html') || url.pathname.endsWith('projects.html');
-        if (!isPageNav) return;
-
-        if (url.pathname !== window.location.pathname) {
-            e.preventDefault();
-            const cacheBust = Date.now();
-            const target = `${url.pathname}?refresh=${cacheBust}${url.hash || ''}`;
-            window.location.assign(target);
-        }
-    });
-});
-
 // Toggle Hidden Skills with paging
+const skillsContainer = document.querySelector('.skills-container');
 const hiddenSkills = document.querySelector('.hidden-skills');
 const skillsPagination = document.querySelector('.skills-pagination');
 const skillsPrev = document.getElementById('skillsPrev');
 const skillsNext = document.getElementById('skillsNext');
 const skillsPageInfo = document.getElementById('skillsPageInfo');
-const hiddenSkillCards = hiddenSkills ? Array.from(hiddenSkills.children) : [];
+const baseSkillCards = skillsContainer ? Array.from(skillsContainer.children) : [];
+const extraSkillCards = hiddenSkills ? Array.from(hiddenSkills.children) : [];
 let currentSkillsPage = 0;
 
 const getSkillsPerPage = () => {
-    if (window.innerWidth <= 768) return 2;
-    if (window.innerWidth <= 1024) return 4;
+    if (window.innerWidth <= 768) return 2; // 2 rows of 1
+    if (window.innerWidth <= 1024) return 4; // 2 rows of 2
     return 6; // 2 rows of 3
 };
 
 const buildSkillsPages = () => {
-    if (!hiddenSkills || !hiddenSkillCards.length) return;
+    if (!hiddenSkills || (!baseSkillCards.length && !extraSkillCards.length)) return;
 
     const perPage = getSkillsPerPage();
     const track = document.createElement('div');
     track.className = 'hidden-skills-track';
 
-    for (let i = 0; i < hiddenSkillCards.length; i += perPage) {
+    const allCards = baseSkillCards.concat(extraSkillCards);
+
+    for (let i = 0; i < allCards.length; i += perPage) {
         const page = document.createElement('div');
         page.className = 'hidden-skills-page';
-        hiddenSkillCards.slice(i, i + perPage).forEach(card => page.appendChild(card));
+        allCards.slice(i, i + perPage).forEach(card => page.appendChild(card));
         track.appendChild(page);
     }
 
@@ -145,7 +121,7 @@ const updateSkillsPager = () => {
     if (skillsPrev) skillsPrev.disabled = currentSkillsPage <= 0;
     if (skillsNext) skillsNext.disabled = currentSkillsPage >= totalPages - 1;
     if (skillsPagination) {
-        skillsPagination.classList.toggle('is-visible', hiddenSkills.classList.contains('is-visible'));
+        skillsPagination.classList.toggle('is-visible', totalPages > 1 && hiddenSkills.classList.contains('is-visible'));
     }
 };
 
@@ -155,12 +131,22 @@ const toggleHiddenSkills = () => {
 
     const isVisible = hiddenSkills.classList.contains('is-visible');
     if (!isVisible) {
+        if (skillsContainer) {
+            skillsContainer.style.display = 'none';
+        }
         hiddenSkills.classList.add('is-visible');
         button.innerText = 'Show Less Skills';
         buildSkillsPages();
     } else {
         hiddenSkills.classList.remove('is-visible');
         if (skillsPagination) skillsPagination.classList.remove('is-visible');
+        if (skillsContainer) {
+            skillsContainer.style.display = '';
+            skillsContainer.innerHTML = '';
+            baseSkillCards.forEach(card => skillsContainer.appendChild(card));
+        }
+        hiddenSkills.innerHTML = '';
+        extraSkillCards.forEach(card => hiddenSkills.appendChild(card));
         button.innerText = 'View All Skills';
     }
 };
