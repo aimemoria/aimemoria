@@ -41,15 +41,18 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-    <!-- EmailJS SDK -->
-    <script src="js/emailjs.min.js"></script>
 </head>
 <body>
     <header>
         <div><a href="#home" class="logo">aimemoria</a></div>
         <nav>
-            <button id="darkModeToggle" class="dark-mode-btn">&#9680;</button>
-            <button id="menuToggle" class="menu-toggle">&#x2015;<br>&#x2015;</button>
+            <button id="darkModeToggle" class="dark-mode-btn" aria-label="Toggle dark mode">
+                <i class="fas fa-moon" aria-hidden="true"></i>
+            </button>
+            <button id="menuToggle" class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
             <ul class="menu">
                 <li><a href="#home" class="quicksand-menu">Home</a></li>
                 <li><a href="#about" class="quicksand-menu">About</a></li>
@@ -79,6 +82,11 @@
         <section id="about">
             <div class="about-section">
                 <aside class="left-sidebar">
+                    <div class="card-3" onclick="window.location.href='projects.html'" style="cursor: pointer;">
+                        <img src="images/projects-icon.png" alt="Projects Icon" class="card-icon">
+                        <h3><span id="project-count">--</span></h3>
+                        <p>Completed Projects</p>
+                    </div>
                     <div class="card-1">
                         <img src="images/experience-icon.png" alt="Experience Icon" class="card-icon">
                         <h3><span id="yearsInField"></span> Years</h3>
@@ -88,11 +96,6 @@
                         <img src="images/certificates-icon.png" alt="Certificates Icon" class="card-icon">
                         <h3>Certificates</h3>
                         <p>Available upon request</p>
-                    </div>
-                    <div class="card-3" onclick="window.location.href='projects.html'" style="cursor: pointer;">
-                        <img src="images/projects-icon.png" alt="Projects Icon" class="card-icon">
-                        <h3>10+</h3>
-                        <p>Completed Projects</p>
                     </div>
                 </aside>
                 <div class="about-1">
@@ -147,6 +150,39 @@
                 <p>Core technologies for structuring and styling web pages.</p>
                 <p class="skill-tools">Sublime Text, Visual Studio Code, Chrome DevTools.</p>
             </div>
+            <!-- Skill Card 4B -->
+                <div class="skill-card">
+                    <div class="skill-icon"><i class="fab fa-python" style="font-size: 48px; color: #3776ab;"></i></div>
+                    <h3>Python</h3>
+                    <p>Versatile language for automation, data analysis, and backend development.</p>
+                    <p class="skill-tools">Flask, Streamlit, Jupyter, APIs</p>
+                </div>
+                <!-- Skill Card 4C -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-hashtag" style="font-size: 48px; color: #5c8df6;"></i>
+                    </div>
+                    <h3>C#</h3>
+                    <p>Modern language for building desktop, web, and enterprise applications.</p>
+                    <p class="skill-tools">.NET, Visual Studio</p>
+                </div>
+                <!-- Skill Card 4D -->
+                <div class="skill-card">
+                    <div class="skill-icon"><i class="fab fa-react" style="font-size: 48px; color: #61dafb;"></i></div>
+                    <h3>React & Next.js</h3>
+                    <p>Frontend frameworks for fast, scalable, and SEO-friendly web apps.</p>
+                    <p class="skill-tools">React, Next.js, TypeScript</p>
+                </div>
+                <!-- Skill Card 4E -->
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fab fa-git-alt" style="font-size: 48px; color: #f05133;"></i>
+                        <i class="fab fa-microsoft" style="font-size: 48px; color: #5e5e5e;"></i>
+                    </div>
+                    <h3>Git & .NET</h3>
+                    <p>Version control and enterprise development tooling.</p>
+                    <p class="skill-tools">Git, .NET, Visual Studio, Eclipse</p>
+                </div>
         <!-- Skill Card 5 -->
                 <div class="skill-card">
                     <div class="skill-icon"><i class="fas fa-database" style="font-size: 48px; color: #f0db4f;"></i>
@@ -185,13 +221,16 @@
                     <h2>Reach Me Out</h2>
                     <p>If you have any questions, feel free to reach out!</p>
                     <form id="contactForm">
+                        <input type="hidden" name="access_key" value="8b8bcef7-e4c1-472e-a5f3-9f4269833247">
+                        <input type="hidden" name="subject" value="New Contact Request from Aime Moria Website">
+                        <input type="hidden" name="from_name" value="Aime Moria Contact Form">
                         <div class="form-group">
                             <label for="name">Your Name<span style="color: red;">*</span></label>
                             <input type="text" id="name" name="name" placeholder="Enter your name" required>
                         </div>
                         <div class="form-group">
                             <label for="contact-info">Email<span style="color: red;">*</span></label>
-                            <input type="email" id="contact-info" name="contact-info" placeholder="Enter your email" required>
+                            <input type="email" id="contact-info" name="email" placeholder="Enter your email" required>
                         </div>
                         <div class="form-group">
                             <label for="location">Location</label>

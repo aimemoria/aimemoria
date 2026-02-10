@@ -80,11 +80,8 @@ function toggleHiddenSkills() {
     }
 }
 
-// Initialize EmailJS with your Public Key
-emailjs.init('-hfbWk-2-MUzwJKl4'); // Replace with your Public Key
-
 // Add an event listener to the form
-document.getElementById('contactForm').addEventListener('submit', function (e) {
+document.getElementById('contactForm').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent the default form submission
 
     // Get form data
@@ -109,29 +106,30 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
         return; // Stop further execution
     }
 
-    // Prepare the email data
-    const emailData = {
-        name: name,
-        contact_info: contactInfo,
-        message: message,
-    };
+    const form = document.getElementById('contactForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
 
-    // Include location only if provided
-    if (location.trim() !== '') {
-        emailData.location = location;
-    }
+    submitButton.textContent = 'Sending...';
+    submitButton.disabled = true;
 
-    // Send email using EmailJS
-    emailjs.send('service_3mkn5sq', 'template_e8rlxer', emailData)
-    .then(() => {
-        // Display success message
-        document.getElementById('form-message').textContent = 'Thank you! Your message has been sent.';
-        document.getElementById('form-message').style.color = 'green';
+    try {
+        const formData = new FormData(form);
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        });
 
-        // Clear the form (optional)
-        document.getElementById('contactForm').reset();
-    }, (error) => {
-        // Display error message and fall back to mailto
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('form-message').textContent = 'Thank you! Your message has been sent.';
+            document.getElementById('form-message').style.color = 'green';
+            form.reset();
+        } else {
+            throw new Error('Web3Forms error');
+        }
+    } catch (error) {
         console.error('Error:', error);
         document.getElementById('form-message').textContent = 'Email service is unavailable. Opening your email app...';
         document.getElementById('form-message').style.color = 'red';
@@ -148,12 +146,33 @@ document.getElementById('contactForm').addEventListener('submit', function (e) {
         const body = encodeURIComponent(bodyLines.join('\n'));
         const mailto = `mailto:220aime@gmail.com?subject=${subject}&body=${body}`;
         window.location.href = mailto;
-    });
+    } finally {
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+    }
 });
 
 // Automatically update the year
 document.getElementById('currentYear').textContent = new Date().getFullYear();
 document.getElementById('yearsInField').textContent = new Date().getFullYear() - 2022;
+
+// Update project count from projects.json
+const updateProjectCount = () => {
+    const countEl = document.getElementById('project-count');
+    if (!countEl) return;
+
+    fetch('data/projects.json')
+        .then(response => response.json())
+        .then(data => {
+            const total = Array.isArray(data) ? data.length : (data.projects ? data.projects.length : 0);
+            countEl.textContent = total || '--';
+        })
+        .catch(() => {
+            countEl.textContent = '--';
+        });
+};
+
+updateProjectCount();
 
 // Match contact sidebar button heights to form card
 const syncContactLinkHeights = () => {
