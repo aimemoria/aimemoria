@@ -5,6 +5,13 @@ const headerHeight = document.querySelector('header').offsetHeight;
 document.querySelectorAll('section').forEach(section => {
     section.style.scrollMarginTop = `${headerHeight+10}px`;
 });
+
+// Force a deep refresh when returning from back/forward cache
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
 // Dark/Light Mode Toggle
 const darkModeToggle = document.getElementById('darkModeToggle');
 const setThemeIcon = () => {
@@ -66,19 +73,119 @@ menu.querySelectorAll('a').forEach(link => {
 
 mobileQuery.addEventListener('change', () => setMenuState(false));
 
-// Toggle Hidden Skills
-function toggleHiddenSkills() {
-    const hiddenSkills = document.querySelector('.hidden-skills');
-    const button = document.querySelector('.view-skills-btn');
+// Deep refresh on page navigation (index/projects)
+document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http')) {
+            return;
+        }
 
-    if (hiddenSkills.style.display === 'none' || hiddenSkills.style.display === '') {
-        hiddenSkills.style.display = 'grid';
+        const url = new URL(href, window.location.origin);
+        const isPageNav = url.pathname.endsWith('index.html') || url.pathname.endsWith('projects.html');
+        if (!isPageNav) return;
+
+        if (url.pathname !== window.location.pathname) {
+            e.preventDefault();
+            const cacheBust = Date.now();
+            const target = `${url.pathname}?refresh=${cacheBust}${url.hash || ''}`;
+            window.location.assign(target);
+        }
+    });
+});
+
+// Toggle Hidden Skills with paging
+const hiddenSkills = document.querySelector('.hidden-skills');
+const skillsPagination = document.querySelector('.skills-pagination');
+const skillsPrev = document.getElementById('skillsPrev');
+const skillsNext = document.getElementById('skillsNext');
+const skillsPageInfo = document.getElementById('skillsPageInfo');
+const hiddenSkillCards = hiddenSkills ? Array.from(hiddenSkills.children) : [];
+let currentSkillsPage = 0;
+
+const getSkillsPerPage = () => {
+    if (window.innerWidth <= 768) return 2;
+    if (window.innerWidth <= 1024) return 4;
+    return 6; // 2 rows of 3
+};
+
+const buildSkillsPages = () => {
+    if (!hiddenSkills || !hiddenSkillCards.length) return;
+
+    const perPage = getSkillsPerPage();
+    const track = document.createElement('div');
+    track.className = 'hidden-skills-track';
+
+    for (let i = 0; i < hiddenSkillCards.length; i += perPage) {
+        const page = document.createElement('div');
+        page.className = 'hidden-skills-page';
+        hiddenSkillCards.slice(i, i + perPage).forEach(card => page.appendChild(card));
+        track.appendChild(page);
+    }
+
+    hiddenSkills.innerHTML = '';
+    hiddenSkills.appendChild(track);
+    currentSkillsPage = Math.min(currentSkillsPage, track.children.length - 1);
+    updateSkillsPager();
+};
+
+const updateSkillsPager = () => {
+    if (!hiddenSkills) return;
+    const track = hiddenSkills.querySelector('.hidden-skills-track');
+    if (!track) return;
+
+    const totalPages = track.children.length;
+    const pageWidth = 100 * currentSkillsPage;
+    track.style.transform = `translateX(-${pageWidth}%)`;
+
+    if (skillsPageInfo) {
+        skillsPageInfo.textContent = totalPages > 1 ? `Page ${currentSkillsPage + 1} of ${totalPages}` : '';
+    }
+
+    if (skillsPrev) skillsPrev.disabled = currentSkillsPage <= 0;
+    if (skillsNext) skillsNext.disabled = currentSkillsPage >= totalPages - 1;
+    if (skillsPagination) {
+        skillsPagination.classList.toggle('is-visible', totalPages > 1 && hiddenSkills.classList.contains('is-visible'));
+    }
+};
+
+const toggleHiddenSkills = () => {
+    const button = document.querySelector('.view-skills-btn');
+    if (!hiddenSkills) return;
+
+    const isVisible = hiddenSkills.classList.contains('is-visible');
+    if (!isVisible) {
+        hiddenSkills.classList.add('is-visible');
         button.innerText = 'Show Less Skills';
+        buildSkillsPages();
     } else {
-        hiddenSkills.style.display = 'none';
+        hiddenSkills.classList.remove('is-visible');
+        if (skillsPagination) skillsPagination.classList.remove('is-visible');
         button.innerText = 'View All Skills';
     }
+};
+
+if (skillsPrev) {
+    skillsPrev.addEventListener('click', () => {
+        currentSkillsPage = Math.max(0, currentSkillsPage - 1);
+        updateSkillsPager();
+    });
 }
+
+if (skillsNext) {
+    skillsNext.addEventListener('click', () => {
+        const track = hiddenSkills ? hiddenSkills.querySelector('.hidden-skills-track') : null;
+        const totalPages = track ? track.children.length : 0;
+        currentSkillsPage = Math.min(totalPages - 1, currentSkillsPage + 1);
+        updateSkillsPager();
+    });
+}
+
+window.addEventListener('resize', () => {
+    if (hiddenSkills && hiddenSkills.classList.contains('is-visible')) {
+        buildSkillsPages();
+    }
+});
 
 // Add an event listener to the form
 document.getElementById('contactForm').addEventListener('submit', async function (e) {
@@ -156,19 +263,20 @@ document.getElementById('contactForm').addEventListener('submit', async function
 document.getElementById('currentYear').textContent = new Date().getFullYear();
 document.getElementById('yearsInField').textContent = new Date().getFullYear() - 2022;
 
-// Update project count from projects.json
+// Update project count from GitHub API
 const updateProjectCount = () => {
     const countEl = document.getElementById('project-count');
     if (!countEl) return;
 
-    fetch('data/projects.json')
+    fetch('https://api.github.com/users/aimemoria/repos?per_page=100')
         .then(response => response.json())
-        .then(data => {
-            const total = Array.isArray(data) ? data.length : (data.projects ? data.projects.length : 0);
-            countEl.textContent = total ? `${total}+` : '--';
+        .then(repos => {
+            const hidden = ['aimemoria', 'Elliot-Media'];
+            const count = repos.filter(r => !r.private && !r.fork && hidden.indexOf(r.name) === -1).length;
+            countEl.textContent = count ? count + '+' : '--';
         })
         .catch(() => {
-            countEl.textContent = '--';
+            countEl.textContent = '10+';
         });
 };
 
